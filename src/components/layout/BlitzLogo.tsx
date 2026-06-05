@@ -22,8 +22,8 @@ const iconSizes = {
   lg: 'h-9 w-9',
 }
 
-const iconSrc = `${import.meta.env.BASE_URL}logo-icon-dark.png`
-const wordmarkSrc = `${import.meta.env.BASE_URL}logo-dark.png`
+const iconSrc = `${import.meta.env.BASE_URL}logos/logo-icon-dark.png`
+const wordmarkSrc = `${import.meta.env.BASE_URL}logos/logo-dark.png`
 
 export function BlitzLogo({ className, onDark = false, size = 'md', showText = true }: BlitzLogoProps) {
   const { theme } = useTheme()
