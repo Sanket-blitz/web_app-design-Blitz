@@ -1,31 +1,23 @@
 import { Link } from 'react-router-dom'
 import { cn } from '../../lib/utils'
+import { BlitzLogoSVG } from './BlitzLogoSVG'
 
 interface BlitzLogoProps {
   className?: string
-  /** Force white logo (for dark backgrounds like CTA banners) */
+  /** Use white wordmark on dark backgrounds (e.g. CTA banners) */
   onDark?: boolean
   size?: 'sm' | 'md' | 'lg'
+  showText?: boolean
 }
 
-const sizes = {
-  sm: 'h-6',
-  md: 'h-8',
-  lg: 'h-10',
-}
-
-export function BlitzLogo({ className, onDark, size = 'md' }: BlitzLogoProps) {
+export function BlitzLogo({ className, size = 'md', showText = true }: BlitzLogoProps) {
   return (
-    <Link to="/" className={cn('inline-flex items-center group', className)} aria-label="Blitz home">
-      <img
-        src="/logo.png"
-        alt="blitz"
-        className={cn(
-          'w-auto transition-all duration-200 group-hover:opacity-90',
-          sizes[size],
-          onDark ? 'brightness-100' : 'brightness-0 dark:brightness-100'
-        )}
-      />
+    <Link
+      to="/"
+      className={cn('inline-flex items-center group transition-opacity hover:opacity-75', className)}
+      aria-label="Blitz Fulfillment OS home"
+    >
+      <BlitzLogoSVG size={size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md'} showText={showText} />
     </Link>
   )
 }

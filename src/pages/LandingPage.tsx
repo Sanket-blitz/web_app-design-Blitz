@@ -16,6 +16,7 @@ import { Footer } from '../components/layout/Footer'
 import { HeroNetwork } from '../components/landing/HeroNetwork'
 import { BookDemoModal } from '../components/landing/BookDemoModal'
 import { FulfillmentInfographic } from '../components/landing/FulfillmentInfographic'
+import { FulfillmentFlowCards } from '../components/landing/FulfillmentFlowCards'
 import { CaseStudies } from '../components/landing/CaseStudies'
 import { ThemeToggle } from '../components/ui/ThemeToggle'
 import { Button } from '../components/ui/Button'
@@ -156,6 +157,18 @@ export function LandingPage() {
             </Card>
           ))}
         </div>
+      </section>
+
+      {/* Fulfillment Flow */}
+      <section className="max-w-6xl mx-auto px-6 py-24">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-semibold text-charcoal dark:text-charcoal tracking-tight">The fulfillment network</h2>
+          <p className="mt-3 text-graphite dark:text-graphite max-w-2xl mx-auto">
+            From your retail stores to customer doorsteps. A complete logistics system designed for speed and reliability.
+          </p>
+        </div>
+
+        <FulfillmentFlowCards />
       </section>
 
       {/* Case Studies */}
