@@ -1,0 +1,231 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  /* Fixed literals — never invert */
+  --color-pure-white: #ffffff;
+  --color-pure-black: #1d1d1f;
+  --color-slate: #1d1d1f;
+  --color-slate-soft: #2c2c2e;
+
+  /* Semantic — adapt per theme */
+  --color-white: #ffffff;
+  --color-off-white: #fafafa;
+  --color-surface: #f5f5f7;
+  --color-border: #e8e8ed;
+  --color-border-strong: #d1d1d6;
+  --color-graphite: #6e6e73;
+  --color-charcoal: #1d1d1f;
+  --color-charcoal-soft: #2c2c2e;
+  --color-accent: #3b6fd9;
+  --color-accent-light: #5b8def;
+  --color-accent-soft: #e8f0fe;
+  --color-accent-hover: #2f5bb8;
+  --color-accent-dark: #1e3a7a;
+  --color-success: #1a7f4b;
+  --color-success-light: #34c77b;
+  --color-success-soft: #e6f4ec;
+  --color-warning: #b45309;
+  --color-warning-light: #f59e0b;
+  --color-warning-soft: #fef3e2;
+  --color-error: #c41e3a;
+  --color-error-light: #f43f5e;
+  --color-error-soft: #fce8ec;
+  --color-info: #0284c7;
+  --color-info-light: #06b6d4;
+  --color-info-soft: #e0f2fe;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-2xl: 16px;
+
+  --shadow-xs: 0 0.5px 1px rgba(29, 29, 31, 0.02);
+  --shadow-sm: 0 1px 2px rgba(29, 29, 31, 0.04);
+  --shadow-md: 0 4px 12px rgba(29, 29, 31, 0.06);
+  --shadow-lg: 0 8px 24px rgba(29, 29, 31, 0.08);
+  --shadow-xl: 0 16px 48px rgba(29, 29, 31, 0.1);
+  --shadow-2xl: 0 24px 64px rgba(29, 29, 31, 0.12);
+}
+
+.dark {
+  --color-white: #2c2c2e;
+  --color-off-white: #141416;
+  --color-surface: #1d1d1f;
+  --color-border: #3a3a3c;
+  --color-border-strong: #48484a;
+  --color-graphite: #98989d;
+  --color-charcoal: #f5f5f7;
+  --color-charcoal-soft: #e8e8ed;
+  --color-accent: #5b8def;
+  --color-accent-light: #7aa3f5;
+  --color-accent-soft: #1a2a4a;
+  --color-accent-hover: #7aa3f5;
+  --color-accent-dark: #3a5dc4;
+  --color-success: #34c77b;
+  --color-success-light: #5ad89e;
+  --color-success-soft: #1a3d2e;
+  --color-warning: #f59e0b;
+  --color-warning-light: #fbbf24;
+  --color-warning-soft: #3d2e14;
+  --color-error: #f43f5e;
+  --color-error-light: #f87171;
+  --color-error-soft: #3d1a22;
+  --color-info: #06b6d4;
+  --color-info-light: #22d3ee;
+  --color-info-soft: #0c2d3e;
+
+  --shadow-xs: 0 0.5px 1px rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.5);
+  --shadow-2xl: 0 24px 64px rgba(0, 0, 0, 0.6);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply antialiased scroll-smooth;
+  }
+
+  body {
+    @apply bg-off-white text-charcoal font-sans transition-colors duration-300;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+
+  .leaflet-container {
+    font-family: inherit;
+    background: var(--color-surface);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Gradient utilities */
+  .gradient-mesh {
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(59, 111, 217, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(59, 111, 217, 0.06) 0%, transparent 40%),
+      radial-gradient(ellipse at 60% 80%, rgba(26, 127, 75, 0.04) 0%, transparent 40%);
+  }
+
+  .dark .gradient-mesh {
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(91, 141, 239, 0.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(91, 141, 239, 0.08) 0%, transparent 40%),
+      radial-gradient(ellipse at 60% 80%, rgba(52, 199, 123, 0.06) 0%, transparent 40%);
+  }
+
+  .gradient-accent {
+    background: linear-gradient(135deg, rgba(59, 111, 217, 0.1) 0%, rgba(59, 111, 217, 0.05) 100%);
+  }
+
+  .dark .gradient-accent {
+    background: linear-gradient(135deg, rgba(91, 141, 239, 0.15) 0%, rgba(91, 141, 239, 0.08) 100%);
+  }
+
+  .gradient-success {
+    background: linear-gradient(135deg, rgba(26, 127, 75, 0.1) 0%, rgba(26, 127, 75, 0.05) 100%);
+  }
+
+  .dark .gradient-success {
+    background: linear-gradient(135deg, rgba(52, 199, 123, 0.15) 0%, rgba(52, 199, 123, 0.08) 100%);
+  }
+
+  /* Animation utilities */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-fadeInUp {
+    animation: fadeInUp 0.4s ease-out;
+  }
+
+  .animate-slideInLeft {
+    animation: slideInLeft 0.4s ease-out;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 3s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.3s ease-out;
+  }
+
+  .text-pure-white {
+    color: var(--color-pure-white);
+  }
+
+  .bg-slate-banner {
+    background-color: var(--color-slate);
+  }
+}
