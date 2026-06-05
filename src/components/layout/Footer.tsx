@@ -4,7 +4,6 @@ import { BlitzLogo } from './BlitzLogo'
 const links: Record<string, { label: string; to: string }[]> = {
   Product: [
     { label: 'Features', to: '/#features' },
-    { label: 'GTM Strategy', to: '/gtm' },
     { label: 'Design System', to: '/design-system' },
     { label: 'Get Started', to: '/auth' },
   ],

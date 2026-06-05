@@ -55,9 +55,6 @@ export function LandingPage() {
                 {l.label}
               </a>
             ))}
-            <Link to="/gtm" className="px-3 py-1.5 rounded-lg text-sm font-medium text-graphite hover:text-charcoal hover:bg-surface dark:hover:bg-zinc-800 transition-all">
-              GTM Strategy
-            </Link>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle showLabels className="hidden sm:flex" />

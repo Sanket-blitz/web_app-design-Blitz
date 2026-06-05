@@ -81,6 +81,7 @@ interface OnboardingContextType {
   activeStoreId: string
   setActiveStoreId: (id: string) => void
   addStore: (data: StoreData) => Store
+  deleteStore: (id: string) => void
   activeStore: Store
   orders: Order[]
   addOrder: (order: Order) => void
@@ -162,6 +163,16 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     return newStore
   }
 
+  const deleteStore = (id: string) => {
+    setStores((prev) => prev.filter((s) => s.id !== id))
+    setActiveStoreId((cur) => {
+      if (cur !== id) return cur
+      const remaining = stores.filter((s) => s.id !== id)
+      return remaining[0]?.id ?? ''
+    })
+    setOrders((prev) => prev.filter((o) => o.storeId !== id))
+  }
+
   const addOrder = (order: Order) => setOrders((prev) => [order, ...prev])
 
   const updateOrder = (id: string, data: Partial<Order>) => {
@@ -213,6 +224,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         activeStoreId,
         setActiveStoreId,
         addStore,
+        deleteStore,
         activeStore,
         orders,
         addOrder,
