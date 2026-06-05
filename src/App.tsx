@@ -19,11 +19,13 @@ import { Dashboard } from './pages/Dashboard'
 import { CreateDeliveryPage } from './pages/dashboard/CreateDeliveryPage'
 import { DesignSystemPage } from './pages/DesignSystemPage'
 
+const routerBasename = import.meta.env.BASE_URL.replace(/\/$/, '')
+
 export default function App() {
   return (
     <ThemeProvider>
     <OnboardingProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={routerBasename || undefined}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth" element={<EntryPage />} />
