@@ -79,7 +79,7 @@ export function CoverageEngine() {
   return (
     <div
       ref={ref}
-      className="relative rounded-2xl border-2 border-border dark:border-zinc-600 overflow-hidden bg-pure-white dark:bg-[#0f0f14] shadow-xl"
+      className="relative rounded-2xl border-2 border-border dark:border-zinc-600 overflow-hidden bg-pure-white dark:bg-[#0f0f14] shadow-xl flex"
       style={{ minHeight: 'clamp(430px, 52vw, 520px)' }}
     >
       {/* Map backdrop */}
@@ -94,10 +94,10 @@ export function CoverageEngine() {
       />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(139,92,246,0.08),transparent_55%)] dark:bg-[radial-gradient(ellipse_at_30%_50%,rgba(139,92,246,0.14),transparent_55%)]" />
 
-      <div className="relative z-10 grid lg:grid-cols-[minmax(210px,1fr)_auto_280px] gap-4 p-4 sm:p-5 items-start">
+      <div className="relative z-10 grid lg:grid-cols-[minmax(210px,1fr)_auto_280px] gap-4 p-4 sm:p-5 flex-1 w-full items-center">
         {/* Left: demand map — zones scoped to this column only */}
-        <div className="relative hidden lg:block min-h-[380px] w-full">
-          <div className="absolute inset-0 pointer-events-none">
+        <div className="relative hidden lg:block w-full h-[360px] self-center">
+          <div className="absolute inset-0 pointer-events-none -translate-x-[5%]">
             {DEMAND_ZONES.map((z, i) => (
               <ZoneMarker key={z.name} zone={z} index={i} />
             ))}
