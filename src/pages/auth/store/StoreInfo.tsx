@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { MapPin } from 'lucide-react'
 import { AuthLayout } from '../../../components/layout/AuthLayout'
 import { Input } from '../../../components/ui/Input'
 import { Button } from '../../../components/ui/Button'
 import { Alert } from '../../../components/ui/Alert'
-import { MapPinPicker } from '../../../components/ui/MapPinPicker'
+import { MapLocationPicker } from '../../../components/map/MapLocationPicker'
 import { useOnboarding } from '../../../context/OnboardingContext'
 import { cn } from '../../../lib/utils'
 
@@ -22,6 +23,16 @@ export function StoreInfo() {
   const navigate = useNavigate()
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitError, setSubmitError] = useState('')
+  const [mapKey, setMapKey] = useState(0)
+  const [autoLocate, setAutoLocate] = useState(false)
+  const [pinCoords, setPinCoords] = useState<{ lat: number; lng: number } | undefined>(
+    store.lat && store.lng ? { lat: store.lat, lng: store.lng } : undefined
+  )
+
+  const handleLocateFromAddress = () => {
+    setAutoLocate(true)
+    setMapKey((k) => k + 1)
+  }
 
   const handleContinue = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -50,14 +61,19 @@ export function StoreInfo() {
       return
     }
 
-    setStore({ storeName, storeCode, storeAddress })
+    setStore({
+      storeName,
+      storeCode,
+      storeAddress,
+      lat: pinCoords?.lat,
+      lng: pinCoords?.lng,
+    })
     navigate('/auth/store/login')
   }
 
   return (
     <AuthLayout>
       <form id={FORM_ID} onSubmit={handleContinue} className="space-y-8 pb-28">
-        {/* sticky footer lives inside the form so the button submits natively */}
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold text-charcoal dark:text-zinc-100 tracking-tight">
             Set up your store
@@ -95,27 +111,48 @@ export function StoreInfo() {
               autoComplete="off"
             />
           </div>
-          <Input
-            id="store-address"
-            name="storeAddress"
-            label="Store Address"
-            placeholder="Full store address with pincode"
-            defaultValue={store.storeAddress}
-            onChange={(e) => setStore({ storeAddress: e.target.value })}
-            error={errors.storeAddress}
-            autoComplete="street-address"
-          />
+
+          <div className="space-y-2">
+            <Input
+              id="store-address"
+              name="storeAddress"
+              label="Store Address"
+              placeholder="Full store address with pincode"
+              defaultValue={store.storeAddress}
+              onChange={(e) => setStore({ storeAddress: e.target.value })}
+              error={errors.storeAddress}
+              autoComplete="street-address"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleLocateFromAddress}
+              disabled={store.storeAddress.trim().length < 2}
+            >
+              <MapPin className="h-4 w-4" />
+              Locate on map
+            </Button>
+          </div>
 
           <div className="space-y-2">
             <label className="block text-sm font-medium text-charcoal dark:text-zinc-200">
               Store location on map
             </label>
             <p className="text-xs text-graphite dark:text-zinc-400">
-              Click the map or use Adjust to set your store pin.
+              Search an address or tap the map to set your store pin.
             </p>
-            <div data-map-picker className="map-picker-shell h-44">
-              <MapPinPicker height="h-full" />
-            </div>
+            <MapLocationPicker
+              key={mapKey}
+              initialSearch={store.storeAddress}
+              initialCoords={pinCoords}
+              autoSearchOnMount={autoLocate}
+              mapHeight="h-44"
+              mapZoom={15}
+              markerLabel="Store location"
+              markerColor="store"
+              onCoordsChange={setPinCoords}
+            />
           </div>
 
           <div>

@@ -58,6 +58,8 @@ export function CreateDeliveryPage() {
   const [barcodeOpen, setBarcodeOpen] = useState(false)
   const [voiceOpen, setVoiceOpen] = useState(false)
   const [mapOpen, setMapOpen] = useState(false)
+  const [mapSearchSeed, setMapSearchSeed] = useState('')
+  const [mapCoordsSeed, setMapCoordsSeed] = useState<{ lat: number; lng: number } | undefined>()
 
   const addressReady = form.addressLine1.trim().length >= 5 && form.pincode.length === 6
   const canSubmit = addressReady && !!form.deliveryOption && serviceability?.serviceable
@@ -315,7 +317,21 @@ export function CreateDeliveryPage() {
                 <Button variant="outline" size="sm" onClick={() => setVoiceOpen(true)}>
                   <Mic className="h-4 w-4" /> Add by Voice
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => setMapOpen(true)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setMapSearchSeed(
+                      [form.addressLine1, form.addressLine2, form.landmark, form.city, form.pincode]
+                        .filter(Boolean)
+                        .join(', ')
+                    )
+                    setMapCoordsSeed(
+                      form.lat && form.lng ? { lat: form.lat, lng: form.lng } : undefined
+                    )
+                    setMapOpen(true)
+                  }}
+                >
                   <MapPin className="h-4 w-4" /> Pin Location
                 </Button>
               </div>
@@ -500,6 +516,8 @@ export function CreateDeliveryPage() {
       <MapPinModal
         open={mapOpen}
         onClose={() => setMapOpen(false)}
+        initialSearch={mapSearchSeed}
+        initialCoords={mapCoordsSeed}
         onConfirm={(coords) => {
           update({ lat: coords.lat, lng: coords.lng })
           setPinConfirmed(true)

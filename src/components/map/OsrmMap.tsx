@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { MapContainer, TileLayer, Marker, Polyline, CircleMarker, useMapEvents, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import { Crosshair, Loader2 } from 'lucide-react'
@@ -37,6 +37,20 @@ function PinClickHandler({ onPin }: { onPin: (c: LatLng) => void }) {
       onPin({ lat: e.latlng.lat, lng: e.latlng.lng })
     },
   })
+  return null
+}
+
+function MapRecenter({ center, zoom }: { center: LatLng; zoom: number }) {
+  const map = useMap()
+  const prev = useRef(center)
+
+  useEffect(() => {
+    if (prev.current.lat !== center.lat || prev.current.lng !== center.lng) {
+      map.flyTo([center.lat, center.lng], zoom, { duration: 0.75 })
+      prev.current = center
+    }
+  }, [center.lat, center.lng, zoom, map])
+
   return null
 }
 
@@ -85,6 +99,10 @@ export function OsrmMap({
     else setRoute((prev) => (prev.length === 0 ? prev : []))
   }, [waypoints, loadRoute])
 
+  useEffect(() => {
+    if (pinMode) setPin(center)
+  }, [pinMode, center.lat, center.lng, center])
+
   const handlePin = (coords: LatLng) => {
     setPin(coords)
     onPin?.(coords)
@@ -116,6 +134,7 @@ export function OsrmMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <MapResizer />
+        <MapRecenter center={mapCenter} zoom={zoom} />
         {pinMode && <PinClickHandler onPin={handlePin} />}
 
         {route.length > 1 && (

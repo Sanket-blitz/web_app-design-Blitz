@@ -35,6 +35,8 @@ export interface StoreData {
   managerName: string
   storeEmail: string
   password: string
+  lat?: number
+  lng?: number
 }
 
 const defaultCompany: CompanyData = {
