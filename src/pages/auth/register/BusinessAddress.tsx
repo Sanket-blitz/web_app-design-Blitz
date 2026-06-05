@@ -4,8 +4,9 @@ import { AuthLayout } from '../../../components/layout/AuthLayout'
 import { ProgressIndicator } from '../../../components/ui/ProgressIndicator'
 import { Input } from '../../../components/ui/Input'
 import { Button } from '../../../components/ui/Button'
+import { Alert } from '../../../components/ui/Alert'
 import { useOnboarding } from '../../../context/OnboardingContext'
-import { PINCODE_DATA } from '../../../lib/utils'
+import { lookupPincode } from '../../../lib/utils'
 import { MapPinPicker } from '../../../components/ui/MapPinPicker'
 
 export function BusinessAddress() {
@@ -13,27 +14,40 @@ export function BusinessAddress() {
   const navigate = useNavigate()
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [pinLoading, setPinLoading] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   useEffect(() => {
     if (company.pincode.length === 6) {
       setPinLoading(true)
       const timer = setTimeout(() => {
-        const data = PINCODE_DATA[company.pincode]
+        const data = lookupPincode(company.pincode)
         if (data) setCompany({ city: data.city, state: data.state })
         setPinLoading(false)
-      }, 500)
+      }, 400)
       return () => clearTimeout(timer)
     }
-  }, [company.pincode])
+  }, [company.pincode, setCompany])
 
-  const validate = () => {
+  const handleComplete = () => {
+    setSubmitError('')
     const e: Record<string, string> = {}
     if (!company.addressLine1.trim()) e.addressLine1 = 'Address is required'
-    if (!company.city.trim()) e.city = 'City is required'
-    if (!company.state.trim()) e.state = 'State is required'
-    if (!company.pincode.trim()) e.pincode = 'Pincode is required'
+    if (company.pincode.length !== 6) e.pincode = 'Enter a valid 6-digit pincode'
+    if (!company.city.trim()) e.city = 'City is required — enter pincode or type manually'
+    if (!company.state.trim()) e.state = 'State is required — enter pincode or type manually'
     setErrors(e)
-    return Object.keys(e).length === 0
+
+    if (Object.keys(e).length === 0) {
+      navigate('/auth/register/success')
+      return
+    }
+
+    setSubmitError('Please fill in the required fields above to complete registration.')
+    const firstKey = Object.keys(e)[0]
+    requestAnimationFrame(() => {
+      const el = document.getElementById(firstKey) ?? document.querySelector(`[id*="${firstKey}"]`)
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    })
   }
 
   return (
@@ -42,13 +56,19 @@ export function BusinessAddress() {
         <ProgressIndicator currentStep={4} totalSteps={4} minutesLeft={1} />
       }
     >
-      <div className="space-y-8">
+      <div className="space-y-8 pb-4">
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold text-charcoal tracking-tight">
             Business address
           </h1>
           <p className="text-graphite">Your registered office location.</p>
         </div>
+
+        {submitError && (
+          <Alert type="error" title="Missing information">
+            {submitError}
+          </Alert>
+        )}
 
         <div className="space-y-5">
           <Input
@@ -79,6 +99,7 @@ export function BusinessAddress() {
               value={company.pincode}
               onChange={(e) => setCompany({ pincode: e.target.value.replace(/\D/g, '').slice(0, 6) })}
               error={errors.pincode}
+              hint="6 digits — city & state auto-fill"
             />
             <Input
               label="City"
@@ -98,18 +119,16 @@ export function BusinessAddress() {
             />
           </div>
 
-          <MapPinPicker />
+          <div className="relative z-0 isolate">
+            <MapPinPicker />
+          </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="relative z-20 flex gap-3 pt-2">
           <Button variant="outline" className="flex-1" size="lg" onClick={() => navigate('/auth/register/bank')}>
             Back
           </Button>
-          <Button
-            className="flex-1"
-            size="lg"
-            onClick={() => { if (validate()) navigate('/auth/register/success') }}
-          >
+          <Button className="flex-1" size="lg" onClick={handleComplete}>
             Complete Registration
           </Button>
         </div>

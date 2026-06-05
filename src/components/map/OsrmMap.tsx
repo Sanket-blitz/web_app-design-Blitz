@@ -48,6 +48,10 @@ const markerColors: Record<string, string> = {
   default: '#3b6fd9',
 }
 
+// Stable references so default props don't change identity every render
+const EMPTY_WAYPOINTS: LatLng[] = []
+const EMPTY_MARKERS: { position: LatLng; label?: string; color?: string }[] = []
+
 export function OsrmMap({
   className,
   height = 'h-48',
@@ -55,8 +59,8 @@ export function OsrmMap({
   zoom = 12,
   pinMode = false,
   onPin,
-  waypoints = [],
-  markers = [],
+  waypoints = EMPTY_WAYPOINTS,
+  markers = EMPTY_MARKERS,
   interactive = true,
 }: OsrmMapProps) {
   const [pin, setPin] = useState<LatLng | null>(null)
@@ -76,7 +80,9 @@ export function OsrmMap({
 
   useEffect(() => {
     if (waypoints.length >= 2) loadRoute(waypoints)
-    else setRoute(waypoints)
+    // Keep the same reference when there's nothing to route, so React bails out
+    // instead of re-rendering on a fresh [] every time (infinite-loop guard).
+    else setRoute((prev) => (prev.length === 0 ? prev : []))
   }, [waypoints, loadRoute])
 
   const handlePin = (coords: LatLng) => {
@@ -95,11 +101,11 @@ export function OsrmMap({
     : pin ? [{ position: pin, label: 'Pinned', color: 'default' }] : []
 
   return (
-    <div className={cn('relative rounded-[var(--radius-lg)] border border-border overflow-hidden', height, className)}>
+    <div className={cn('relative z-0 isolate overflow-hidden rounded-[var(--radius-lg)] border border-border contain-paint', height, className)}>
       <MapContainer
         center={[mapCenter.lat, mapCenter.lng]}
         zoom={zoom}
-        className="h-full w-full z-0"
+        className="h-full w-full !z-0"
         scrollWheelZoom={interactive}
         dragging={interactive}
         zoomControl={interactive}
@@ -144,15 +150,15 @@ export function OsrmMap({
       </MapContainer>
 
       {loading && (
-        <div className="absolute top-3 right-3 z-[500] flex items-center gap-1.5 bg-white/90 dark:bg-surface/90 backdrop-blur-sm px-2.5 py-1.5 rounded-full text-xs text-graphite shadow-sm">
+        <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-white/90 dark:bg-surface/90 backdrop-blur-sm px-2.5 py-1.5 rounded-full text-xs text-graphite shadow-sm pointer-events-none">
           <Loader2 className="h-3 w-3 animate-spin" />
           OSRM routing
         </div>
       )}
 
       {pinMode && !pin && (
-        <div className="absolute inset-0 z-[400] flex items-center justify-center pointer-events-none">
-          <div className="text-center space-y-2 bg-white/90 dark:bg-surface/90 backdrop-blur-sm px-6 py-4 rounded-[var(--radius-lg)] shadow-md pointer-events-auto">
+        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+          <div className="text-center space-y-2 bg-white/90 dark:bg-surface/90 backdrop-blur-sm px-6 py-4 rounded-[var(--radius-lg)] shadow-md pointer-events-auto max-w-[90%]">
             <Crosshair className="h-5 w-5 text-accent mx-auto" />
             <p className="text-sm text-charcoal">Click map or pin location</p>
             <Button variant="outline" size="sm" onClick={handleSetLocation}>
@@ -163,7 +169,7 @@ export function OsrmMap({
       )}
 
       {pin && pinMode && (
-        <div className="absolute bottom-3 left-3 right-3 z-[500] flex items-center justify-between bg-white/95 dark:bg-surface/95 backdrop-blur-sm px-3 py-2 rounded-[var(--radius-md)] border border-border text-xs shadow-sm">
+        <div className="absolute bottom-3 left-3 right-3 z-10 flex items-center justify-between bg-white/95 dark:bg-surface/95 backdrop-blur-sm px-3 py-2 rounded-[var(--radius-md)] border border-border text-xs shadow-sm pointer-events-auto">
           <span className="text-graphite font-mono">
             {pin.lat.toFixed(4)}° N, {pin.lng.toFixed(4)}° E
           </span>

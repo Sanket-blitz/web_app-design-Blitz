@@ -16,6 +16,7 @@ import { LoginPage } from './pages/auth/LoginPage'
 import { WelcomePage } from './pages/auth/WelcomePage'
 import { StoreSelectPage } from './pages/auth/StoreSelectPage'
 import { Dashboard } from './pages/Dashboard'
+import { CreateDeliveryPage } from './pages/dashboard/CreateDeliveryPage'
 import { GTMStrategyPage } from './pages/GTMStrategyPage'
 import { DesignSystemPage } from './pages/DesignSystemPage'
 
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="/auth/stores" element={<StoreSelectPage />} />
           <Route path="/auth/welcome" element={<WelcomePage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/create" element={<CreateDeliveryPage />} />
           <Route path="/gtm" element={<GTMStrategyPage />} />
           <Route path="/design-system" element={<DesignSystemPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

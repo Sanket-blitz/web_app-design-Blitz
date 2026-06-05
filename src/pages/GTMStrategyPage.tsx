@@ -82,11 +82,11 @@ const segments = [
 ]
 
 const competitors = [
-  { name: 'Porter', pricing: '₹80–150/order', speed: '2–4 hrs', network: 'Intra-city', tech: 'Basic', merchant: 'Low', customer: 'Medium' },
-  { name: 'Shadowfax', pricing: '₹60–120/order', speed: 'Same-day', network: 'Pan-India', tech: 'Good', merchant: 'Medium', customer: 'Good' },
-  { name: 'Delhivery', pricing: '₹50–100/order', speed: '1–3 days', network: 'National', tech: 'Enterprise', merchant: 'High', customer: 'Good' },
-  { name: 'Dunzo', pricing: '₹70–130/order', speed: '30–60 min', network: 'Metro', tech: 'Consumer', merchant: 'Low', customer: 'High' },
-  { name: 'Blitz', pricing: '₹65–110/order', speed: '30–90 min', network: 'Metro+', tech: 'Premium', merchant: 'Best', customer: 'Best', highlight: true },
+  { name: 'Blitz Store2Door', pricing: 'Rs. 70–80', speed: '95–98% SDD', network: 'Store-as-hub', tech: 'POS + checkout', merchant: '100% data', customer: '<1–2% RTO', highlight: true },
+  { name: 'Traditional E-Com', pricing: 'Rs. 80–90', speed: '0% SDD', network: 'Warehouse', tech: 'Marketplace', merchant: 'Walled garden', customer: '15–30% RTO' },
+  { name: 'Porter On-Demand', pricing: 'Rs. 150–250+', speed: '99% immediate', network: 'Unbatched', tech: 'Transactional', merchant: 'No brand data', customer: 'Reverse billing' },
+  { name: 'SDFX SDD', pricing: 'Rs. 90–130', speed: '75–85% SDD', network: 'Central hub', tech: '3PL tracking', merchant: 'Hub dependent', customer: '5–8% RTO' },
+  { name: 'Shiprocket SDD/NDD', pricing: 'Rs. 110–160+', speed: '65–80% SDD', network: '25+ couriers', tech: 'Fragmented', merchant: 'Heavy labeling', customer: '10–18% RTO' },
 ]
 
 export function GTMStrategyPage() {
@@ -349,7 +349,7 @@ export function GTMStrategyPage() {
             </Section>
 
             {/* Competitive */}
-            <Section id="competitive" title="Competitive Analysis" subtitle="Blitz wins on merchant experience and speed">
+            <Section id="competitive" title="Competitive Analysis" subtitle="The unit economics don't lie — how Blitz STORE2DOOR compares to the market">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>

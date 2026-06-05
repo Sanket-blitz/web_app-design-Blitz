@@ -35,13 +35,13 @@ export function StoreSwitcherModal({ open, onClose }: StoreSwitcherModalProps) {
           >
             <div className={cn(
               'h-10 w-10 rounded-[var(--radius-md)] flex items-center justify-center shrink-0',
-              activeStoreId === s.id ? 'bg-accent text-white' : 'bg-surface text-charcoal'
+              activeStoreId === s.id ? 'bg-accent text-white' : 'bg-surface dark:bg-zinc-800 text-charcoal dark:text-zinc-200'
             )}>
               <Store className="h-4 w-4" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-charcoal">{s.storeName}</p>
-              <p className="text-xs text-graphite flex items-center gap-1 truncate">
+              <p className="text-sm font-semibold text-charcoal dark:text-zinc-100">{s.storeName}</p>
+              <p className="text-xs text-graphite dark:text-zinc-400 flex items-center gap-1 truncate">
                 <MapPin className="h-3 w-3" />{s.storeAddress}
               </p>
             </div>

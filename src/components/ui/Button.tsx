@@ -13,14 +13,15 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants: Record<Variant, string> = {
   primary:
-    'bg-charcoal text-pure-white hover:bg-charcoal-soft active:scale-[0.98] shadow-sm dark:bg-charcoal dark:hover:bg-charcoal-soft disabled:opacity-60 transition-all [color:#ffffff]',
+    'bg-slate text-pure-white hover:bg-slate-soft active:scale-[0.98] shadow-sm dark:bg-accent dark:hover:bg-accent-hover disabled:opacity-60 transition-all',
   secondary:
-    'bg-accent text-pure-white hover:bg-accent-hover active:scale-[0.98] shadow-sm dark:bg-accent dark:hover:bg-accent-light disabled:opacity-60 transition-all [color:#ffffff]',
+    'bg-accent text-pure-white hover:bg-accent-hover active:scale-[0.98] shadow-sm dark:bg-accent dark:hover:bg-accent-light disabled:opacity-60 transition-all',
   accent:
-    'bg-accent text-pure-white hover:bg-accent-hover active:scale-[0.98] shadow-sm dark:bg-accent-light dark:hover:bg-accent disabled:opacity-60 transition-all [color:#ffffff]',
-  ghost: 'bg-transparent text-charcoal hover:bg-surface active:bg-border dark:text-charcoal dark:hover:bg-white/10 transition-colors',
+    'bg-accent text-pure-white hover:bg-accent-hover active:scale-[0.98] shadow-sm dark:bg-accent-light dark:hover:bg-accent disabled:opacity-60 transition-all',
+  ghost:
+    'bg-transparent text-charcoal hover:bg-surface active:bg-border dark:text-charcoal-soft dark:hover:bg-zinc-800 transition-colors',
   outline:
-    'bg-white text-charcoal border border-border-strong hover:border-charcoal/30 hover:bg-off-white active:scale-[0.98] dark:bg-white/5 dark:text-charcoal dark:border-border dark:hover:border-border-strong dark:hover:bg-white/10 transition-all',
+    'bg-pure-white text-slate border border-border-strong hover:border-slate/30 hover:bg-off-white active:scale-[0.98] dark:bg-transparent dark:text-charcoal-soft dark:border-zinc-500 dark:hover:border-zinc-400 dark:hover:bg-zinc-800/60 transition-all',
   'on-dark':
     'bg-transparent text-pure-white border border-pure-white/30 hover:bg-pure-white/10 hover:border-pure-white/50 active:scale-[0.98] transition-all [color:#ffffff]',
   success:

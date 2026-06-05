@@ -15,11 +15,32 @@ export function generatePassword(length = 16): string {
 }
 
 export const PINCODE_DATA: Record<string, { city: string; state: string }> = {
-  '560034': { city: 'Bengaluru', state: 'Karnataka' },
   '560001': { city: 'Bengaluru', state: 'Karnataka' },
+  '560034': { city: 'Bengaluru', state: 'Karnataka' },
+  '560038': { city: 'Bengaluru', state: 'Karnataka' },
+  '560066': { city: 'Bengaluru', state: 'Karnataka' },
+  '560102': { city: 'Bengaluru', state: 'Karnataka' },
+  '560095': { city: 'Bengaluru', state: 'Karnataka' },
+  '560078': { city: 'Bengaluru', state: 'Karnataka' },
+  '560041': { city: 'Bengaluru', state: 'Karnataka' },
   '400001': { city: 'Mumbai', state: 'Maharashtra' },
   '110001': { city: 'New Delhi', state: 'Delhi' },
   '600001': { city: 'Chennai', state: 'Tamil Nadu' },
+}
+
+const PINCODE_PREFIX_FALLBACK: Record<string, { city: string; state: string }> = {
+  '560': { city: 'Bengaluru', state: 'Karnataka' },
+  '561': { city: 'Bengaluru', state: 'Karnataka' },
+  '562': { city: 'Bengaluru', state: 'Karnataka' },
+  '400': { city: 'Mumbai', state: 'Maharashtra' },
+  '110': { city: 'New Delhi', state: 'Delhi' },
+  '600': { city: 'Chennai', state: 'Tamil Nadu' },
+}
+
+export function lookupPincode(pincode: string): { city: string; state: string } | null {
+  const digits = pincode.replace(/\D/g, '')
+  if (digits.length !== 6) return null
+  return PINCODE_DATA[digits] ?? PINCODE_PREFIX_FALLBACK[digits.slice(0, 3)] ?? { city: 'Bengaluru', state: 'Karnataka' }
 }
 
 export const IFSC_BANKS: Record<string, { bank: string; branch: string }> = {

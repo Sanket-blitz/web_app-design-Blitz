@@ -1,19 +1,30 @@
 import { useState, useMemo } from 'react'
-import { Filter, X } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Filter, Plus } from 'lucide-react'
 import { Card } from '../../components/ui/Card'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
+import { EmptyState } from '../../components/ui/EmptyState'
+import { EmptyOrdersIllustration } from '../../components/illustrations/EmptyOrdersIllustration'
 import { useOnboarding } from '../../context/OnboardingContext'
-import { getStatusLabel, getStatusVariant, type Order, type OrderStatus } from '../../lib/orders'
+import {
+  getStatusLabel,
+  getStatusVariant,
+  getServiceLabel,
+  getOrderAmount,
+  type Order,
+  type OrderStatus,
+} from '../../lib/orders'
 import { cn } from '../../lib/utils'
 
-const filters: { id: OrderStatus | 'all'; label: string }[] = [
+const filters: { id: OrderStatus | 'all' | 'active'; label: string }[] = [
   { id: 'all', label: 'All' },
-  { id: 'upcoming', label: 'Upcoming' },
-  { id: 'pickup_pending', label: 'Pickup Pending' },
-  { id: 'ongoing', label: 'Ongoing' },
+  { id: 'active', label: 'Active' },
+  { id: 'created', label: 'Created' },
+  { id: 'assigned', label: 'Assigned' },
+  { id: 'in_transit', label: 'In Transit' },
   { id: 'delivered', label: 'Delivered' },
-  { id: 'returned', label: 'Returns' },
+  { id: 'returned', label: 'Returned' },
   { id: 'cancelled', label: 'Cancelled' },
 ]
 
@@ -22,18 +33,29 @@ interface DashboardOrdersProps {
 }
 
 export function DashboardOrders({ onSelectOrder }: DashboardOrdersProps) {
-  const { orders, activeStore, updateOrder } = useOnboarding()
-  const [filter, setFilter] = useState<OrderStatus | 'all'>('all')
+  const navigate = useNavigate()
+  const { orders, activeStore } = useOnboarding()
+  const [filter, setFilter] = useState<OrderStatus | 'all' | 'active'>('all')
 
   const storeOrders = useMemo(() => {
     const filtered = orders.filter((o) => o.storeId === activeStore.id)
     if (filter === 'all') return filtered
+    if (filter === 'active') {
+      return filtered.filter((o) =>
+        ['created', 'assigned', 'picked_up', 'in_transit', 'pickup_pending', 'ongoing', 'upcoming'].includes(o.status)
+      )
+    }
+    if (filter === 'in_transit') {
+      return filtered.filter((o) => ['in_transit', 'ongoing', 'picked_up'].includes(o.status))
+    }
+    if (filter === 'assigned') {
+      return filtered.filter((o) => ['assigned', 'upcoming', 'pickup_pending'].includes(o.status))
+    }
     return filtered.filter((o) => o.status === filter)
   }, [orders, activeStore.id, filter])
 
-  const handleCancel = (id: string) => {
-    updateOrder(id, { status: 'cancelled' })
-  }
+  const formatTime = (iso: string) =>
+    new Date(iso).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
 
   return (
     <div className="space-y-6">
@@ -42,9 +64,11 @@ export function DashboardOrders({ onSelectOrder }: DashboardOrdersProps) {
           <h1 className="text-2xl font-semibold text-charcoal tracking-tight">Orders</h1>
           <p className="mt-1 text-sm text-graphite">{activeStore.storeName} · {storeOrders.length} orders</p>
         </div>
+        <Button size="sm" onClick={() => navigate('/dashboard/create')}>
+          <Plus className="h-4 w-4" /> Create Delivery
+        </Button>
       </div>
 
-      {/* Filters */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
         <Filter className="h-4 w-4 text-graphite shrink-0" />
         {filters.map((f) => (
@@ -54,8 +78,8 @@ export function DashboardOrders({ onSelectOrder }: DashboardOrdersProps) {
             className={cn(
               'px-3 py-1.5 text-sm rounded-full border whitespace-nowrap transition-colors',
               filter === f.id
-                ? 'bg-charcoal text-white border-charcoal'
-                : 'bg-white text-graphite border-border hover:border-border-strong'
+                ? 'bg-slate text-pure-white border-slate dark:bg-accent dark:border-accent'
+                : 'bg-white dark:bg-white/5 text-graphite dark:text-zinc-300 border-border dark:border-white/10 hover:border-border-strong dark:hover:border-white/25 dark:hover:bg-white/10'
             )}
           >
             {f.label}
@@ -63,43 +87,48 @@ export function DashboardOrders({ onSelectOrder }: DashboardOrdersProps) {
         ))}
       </div>
 
-      <Card padding="sm" className="divide-y divide-border">
+      <Card padding="sm" className="overflow-x-auto">
         {storeOrders.length === 0 ? (
-          <p className="px-4 py-12 text-sm text-graphite text-center">No orders match this filter.</p>
+          <EmptyState
+            icon={<EmptyOrdersIllustration className="h-14 w-14" />}
+            title="Your first delivery is just a few clicks away."
+            action={{ label: 'Create Delivery', onClick: () => navigate('/dashboard/create') }}
+          />
         ) : (
-          storeOrders.map((o) => (
-            <div key={o.id} className="flex flex-col sm:flex-row sm:items-center justify-between px-4 py-4 gap-3 hover:bg-surface/50 transition-colors">
-              <button onClick={() => onSelectOrder(o)} className="flex-1 text-left min-w-0">
-                <div className="flex items-center gap-3 flex-wrap">
-                  <span className="text-sm font-mono font-semibold text-charcoal">{o.id}</span>
-                  <Badge variant={getStatusVariant(o.status)}>{getStatusLabel(o.status)}</Badge>
-                  {o.eta && o.status !== 'delivered' && o.status !== 'returned' && (
-                    <span className="text-xs text-graphite">ETA: {o.eta}</span>
-                  )}
-                </div>
-                <p className="text-sm text-graphite mt-1">{o.customer} · {o.address}</p>
-                <p className="text-xs text-graphite mt-0.5">
-                  {new Date(o.createdAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}
-                </p>
-              </button>
-              <div className="flex items-center gap-4 shrink-0">
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-charcoal">₹{o.cost}</p>
-                  {o.timeTaken && <p className="text-xs text-graphite">{o.timeTaken} min</p>}
-                  {o.cod > 0 && <p className="text-xs text-warning">COD ₹{o.cod}</p>}
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => onSelectOrder(o)}>View</Button>
-                  {(o.status === 'pickup_pending' || o.status === 'upcoming') && (
-                    <Button variant="ghost" size="sm" onClick={() => handleCancel(o.id)}>
-                      <X className="h-3.5 w-3.5" />
-                      Cancel
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))
+          <table className="w-full min-w-[800px] text-sm">
+            <thead>
+              <tr className="border-b border-border dark:border-white/10 text-left text-xs text-graphite dark:text-zinc-400 uppercase tracking-wide">
+                <th className="px-4 py-3 font-medium">Tracking ID</th>
+                <th className="px-4 py-3 font-medium">Customer</th>
+                <th className="px-4 py-3 font-medium">SKU</th>
+                <th className="px-4 py-3 font-medium">Service</th>
+                <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium">ETA</th>
+                <th className="px-4 py-3 font-medium text-right">Amount</th>
+                <th className="px-4 py-3 font-medium">Created</th>
+                <th className="px-4 py-3 font-medium" />
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border dark:divide-white/10">
+              {storeOrders.map((o) => (
+                <tr key={o.id} className="hover:bg-surface/50 dark:hover:bg-white/5 transition-colors">
+                  <td className="px-4 py-3.5 font-mono font-medium text-charcoal dark:text-zinc-200">{o.id}</td>
+                  <td className="px-4 py-3.5 text-charcoal dark:text-zinc-200">{o.customer}</td>
+                  <td className="px-4 py-3.5 text-graphite dark:text-zinc-400">{o.sku ?? '—'}</td>
+                  <td className="px-4 py-3.5 text-graphite dark:text-zinc-400">{getServiceLabel(o)}</td>
+                  <td className="px-4 py-3.5">
+                    <Badge variant={getStatusVariant(o.status)}>{getStatusLabel(o.status)}</Badge>
+                  </td>
+                  <td className="px-4 py-3.5 text-graphite dark:text-zinc-400">{o.eta ?? '—'}</td>
+                  <td className="px-4 py-3.5 text-right font-medium text-charcoal dark:text-zinc-200">₹{getOrderAmount(o)}</td>
+                  <td className="px-4 py-3.5 text-graphite dark:text-zinc-400 text-xs">{formatTime(o.createdAt)}</td>
+                  <td className="px-4 py-3.5">
+                    <Button variant="outline" size="sm" onClick={() => onSelectOrder(o)}>View</Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </Card>
     </div>

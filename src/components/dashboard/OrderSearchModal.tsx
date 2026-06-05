@@ -42,7 +42,7 @@ export function OrderSearchModal({ open, onClose, onSelectOrder }: OrderSearchMo
         {query.trim() && (
           <div className="space-y-2 max-h-[280px] overflow-y-auto">
             {results.length === 0 ? (
-              <p className="text-sm text-graphite text-center py-6">No orders found for "{query}"</p>
+              <p className="text-sm text-graphite dark:text-zinc-400 text-center py-6">No orders found for "{query}"</p>
             ) : (
               results.map((o) => (
                 <button
@@ -51,8 +51,8 @@ export function OrderSearchModal({ open, onClose, onSelectOrder }: OrderSearchMo
                   className="w-full flex items-center justify-between p-3 rounded-[var(--radius-lg)] border border-border hover:border-accent hover:bg-accent-soft/30 transition-all text-left"
                 >
                   <div>
-                    <span className="text-sm font-mono font-semibold text-charcoal">{o.id}</span>
-                    <p className="text-xs text-graphite mt-0.5">{o.customer}</p>
+                    <span className="text-sm font-mono font-semibold text-charcoal dark:text-zinc-100">{o.id}</span>
+                    <p className="text-xs text-graphite dark:text-zinc-400 mt-0.5">{o.customer}</p>
                   </div>
                   <Badge variant={getStatusVariant(o.status)}>{getStatusLabel(o.status)}</Badge>
                 </button>
@@ -61,7 +61,7 @@ export function OrderSearchModal({ open, onClose, onSelectOrder }: OrderSearchMo
           </div>
         )}
         {!query.trim() && (
-          <div className="text-center py-8 text-graphite">
+          <div className="text-center py-8 text-graphite dark:text-zinc-400">
             <Search className="h-8 w-8 mx-auto mb-2 opacity-40" />
             <p className="text-sm">Search by order number or customer name</p>
           </div>

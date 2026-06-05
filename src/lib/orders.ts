@@ -1,4 +1,18 @@
-export type OrderStatus = 'pickup_pending' | 'ongoing' | 'delivered' | 'returned' | 'cancelled' | 'upcoming'
+export type OrderStatus =
+  | 'created'
+  | 'assigned'
+  | 'picked_up'
+  | 'in_transit'
+  | 'delivered'
+  | 'failed'
+  | 'returned'
+  | 'cancelled'
+  | 'pickup_pending'
+  | 'ongoing'
+  | 'upcoming'
+
+export type PaymentType = 'prepaid' | 'cod'
+export type ServiceType = 'fastest' | 'same_day'
 
 export interface TimelineEvent {
   time: string
@@ -13,9 +27,18 @@ export interface TimelineEvent {
 
 export interface Order {
   id: string
+  awb?: string
   customer: string
   phone: string
+  email?: string
   address: string
+  addressLine1?: string
+  addressLine2?: string
+  landmark?: string
+  pincode?: string
+  city?: string
+  lat?: number
+  lng?: number
   storeId: string
   storeName: string
   status: OrderStatus
@@ -26,6 +49,13 @@ export interface Order {
   timeline: TimelineEvent[]
   cod: number
   paymentStatus: 'pending' | 'remitted'
+  paymentType?: PaymentType
+  sku?: string
+  productName?: string
+  quantity?: number
+  itemValue?: number
+  serviceType?: ServiceType
+  serviceLabel?: string
 }
 
 function randCost(seed: number) {
@@ -193,24 +223,50 @@ export const MOCK_ORDERS: Order[] = [
 
 export function getStatusLabel(status: OrderStatus): string {
   const map: Record<OrderStatus, string> = {
-    pickup_pending: 'Pickup pending',
-    ongoing: 'In transit',
+    created: 'Created',
+    assigned: 'Assigned',
+    picked_up: 'Picked up',
+    in_transit: 'In transit',
     delivered: 'Delivered',
+    failed: 'Failed',
     returned: 'Returned',
     cancelled: 'Cancelled',
-    upcoming: 'Upcoming',
+    pickup_pending: 'Pickup pending',
+    ongoing: 'In transit',
+    upcoming: 'Assigned',
   }
   return map[status]
 }
 
-export function getStatusVariant(status: OrderStatus): 'default' | 'accent' | 'success' | 'warning' | 'error' {
-  const map: Record<OrderStatus, 'default' | 'accent' | 'success' | 'warning' | 'error'> = {
-    pickup_pending: 'warning',
-    ongoing: 'accent',
+export function getStatusVariant(status: OrderStatus): 'default' | 'accent' | 'success' | 'warning' | 'error' | 'info' {
+  const map: Record<OrderStatus, 'default' | 'accent' | 'success' | 'warning' | 'error' | 'info'> = {
+    created: 'info',
+    assigned: 'warning',
+    picked_up: 'accent',
+    in_transit: 'accent',
     delivered: 'success',
+    failed: 'error',
     returned: 'default',
     cancelled: 'error',
-    upcoming: 'default',
+    pickup_pending: 'warning',
+    ongoing: 'accent',
+    upcoming: 'warning',
   }
   return map[status]
+}
+
+export function getServiceLabel(order: Order): string {
+  if (order.serviceLabel) return order.serviceLabel
+  if (order.serviceType === 'fastest') return 'Fastest'
+  if (order.serviceType === 'same_day') return 'Same day'
+  return 'Express'
+}
+
+export function getOrderAmount(order: Order): number {
+  const itemTotal = (order.itemValue ?? 0) * (order.quantity ?? 1)
+  return itemTotal > 0 ? itemTotal : order.cost
+}
+
+export function isActiveStatus(status: OrderStatus): boolean {
+  return ['created', 'assigned', 'picked_up', 'in_transit', 'pickup_pending', 'ongoing', 'upcoming'].includes(status)
 }

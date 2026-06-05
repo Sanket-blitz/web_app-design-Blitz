@@ -1,8 +1,10 @@
-export function EmptyOrdersIllustration() {
+import { cn } from '../../lib/utils'
+
+export function EmptyOrdersIllustration({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 200 180"
-      className="w-24 h-24 opacity-75"
+      className={cn('w-24 h-24 opacity-75', className)}
       aria-label="No orders illustration"
     >
       <defs>

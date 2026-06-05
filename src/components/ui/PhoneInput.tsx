@@ -7,6 +7,14 @@ const COUNTRY_CODES = [
   { code: '+971', country: 'AE', label: 'UAE' },
 ]
 
+const fieldClass = cn(
+  'h-11 rounded-[var(--radius-md)] border text-sm transition-all duration-200',
+  'bg-white dark:bg-white/5 text-charcoal dark:text-charcoal',
+  'border-border-strong dark:border-white/20',
+  'hover:border-graphite/40 dark:hover:border-white/30',
+  'focus:border-accent dark:focus:border-accent-light focus:ring-2 focus:ring-accent/20 dark:focus:ring-accent-light/20 focus:outline-none'
+)
+
 interface PhoneInputProps {
   label?: string
   countryCode: string
@@ -33,15 +41,16 @@ export function PhoneInput({
 
   return (
     <div className="space-y-1.5">
-      <label className="block text-sm font-medium text-charcoal">{label}</label>
+      <label className="block text-sm font-medium text-charcoal dark:text-charcoal">{label}</label>
       <div className="flex gap-2">
         <select
           value={countryCode}
           onChange={(e) => onCountryCodeChange(e.target.value)}
-          className="h-11 px-2.5 rounded-[var(--radius-md)] border border-border-strong bg-white dark:bg-charcoal-soft text-sm text-charcoal focus:border-accent focus:ring-2 focus:ring-accent/20 focus:outline-none shrink-0 w-[100px]"
+          className={cn(fieldClass, 'px-2.5 shrink-0 w-[100px]', error && 'border-error dark:border-error-light')}
+          aria-label="Country code"
         >
           {COUNTRY_CODES.map((c) => (
-            <option key={c.code} value={c.code}>
+            <option key={c.code} value={c.code} className="bg-white dark:bg-zinc-900 text-charcoal dark:text-charcoal">
               {c.code}
             </option>
           ))}
@@ -54,13 +63,17 @@ export function PhoneInput({
           value={phone}
           onChange={(e) => handlePhoneChange(e.target.value)}
           className={cn(
-            'flex-1 h-11 px-3.5 rounded-[var(--radius-md)] border text-sm bg-white dark:bg-charcoal-soft text-charcoal placeholder:text-graphite/60 focus:outline-none focus:ring-2 focus:ring-accent/20',
-            error ? 'border-error focus:border-error' : 'border-border-strong focus:border-accent'
+            fieldClass,
+            'flex-1 px-3.5 placeholder:text-graphite/60 dark:placeholder:text-graphite',
+            error
+              ? 'border-error dark:border-error-light focus:border-error dark:focus:border-error-light focus:ring-error/20'
+              : 'focus:border-accent dark:focus:border-accent-light'
           )}
+          aria-invalid={!!error}
         />
       </div>
-      {error && <p className="text-xs text-error" role="alert">{error}</p>}
-      {!error && hint && <p className="text-xs text-graphite">{hint}</p>}
+      {error && <p className="text-xs text-error dark:text-error-light" role="alert">{error}</p>}
+      {!error && hint && <p className="text-xs text-graphite dark:text-graphite">{hint}</p>}
     </div>
   )
 }

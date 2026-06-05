@@ -33,7 +33,7 @@ export function Stat({ label, value, icon, change, className }: StatProps) {
           </div>
         </div>
         {icon && (
-          <div className="text-accent dark:text-accent-light opacity-20 ml-4">
+          <div className="h-11 w-11 rounded-[var(--radius-lg)] bg-accent-soft dark:bg-accent/25 border border-accent/10 dark:border-accent/30 flex items-center justify-center shrink-0 ml-4 text-accent dark:text-accent-light">
             {icon}
           </div>
         )}

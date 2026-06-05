@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { Bell, Search, ChevronDown } from 'lucide-react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Bell, Plus, Search, ChevronDown } from 'lucide-react'
 import { BlitzLogo } from '../../components/layout/BlitzLogo'
 import { ThemeToggle } from '../../components/ui/ThemeToggle'
 import { StoreSwitcherModal } from '../../components/dashboard/StoreSwitcherModal'
 import { OrderSearchModal } from '../../components/dashboard/OrderSearchModal'
 import { useOnboarding } from '../../context/OnboardingContext'
-import { DashboardHome } from './DashboardHome'
-import { DashboardOrders } from './DashboardOrders'
-import { DashboardFinance } from './DashboardFinance'
+import { DashboardHome } from './DashboardHome.tsx'
+import { DashboardOrders } from './DashboardOrders.tsx'
+import { DashboardFinance } from './DashboardFinance.tsx'
 import { OrderTimelineModal } from '../../components/dashboard/OrderTimelineModal'
+import { FloatingCreateButton } from '../../components/dashboard/FloatingCreateButton'
+import { Button } from '../../components/ui/Button'
 import type { Order } from '../../lib/orders'
 import { cn } from '../../lib/utils'
 
@@ -22,6 +24,7 @@ const tabs = [
 type TabId = (typeof tabs)[number]['id']
 
 export function DashboardLayout() {
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const tab = (searchParams.get('tab') as TabId) || 'home'
   const { activeStore, userName, updateOrder } = useOnboarding()
@@ -37,10 +40,20 @@ export function DashboardLayout() {
         e.preventDefault()
         setSearchOpen(true)
       }
+      if (
+        e.key === 'n' &&
+        !e.metaKey &&
+        !e.ctrlKey &&
+        !(e.target instanceof HTMLInputElement) &&
+        !(e.target instanceof HTMLTextAreaElement)
+      ) {
+        e.preventDefault()
+        navigate('/dashboard/create')
+      }
     }
     document.addEventListener('keydown', handler)
     return () => document.removeEventListener('keydown', handler)
-  }, [])
+  }, [navigate])
 
   return (
     <div className="min-h-screen bg-off-white dark:bg-off-white">
@@ -66,28 +79,31 @@ export function DashboardLayout() {
             </nav>
           </div>
           <div className="flex items-center gap-2">
+            <Button size="sm" className="hidden md:inline-flex" onClick={() => navigate('/dashboard/create')}>
+              <Plus className="h-4 w-4" /> Create Delivery
+            </Button>
             <button
               onClick={() => setSearchOpen(true)}
-              className="hidden sm:flex items-center gap-2 h-9 px-3 rounded-[var(--radius-md)] border border-border bg-white text-sm text-graphite hover:border-border-strong transition-colors"
+              className="hidden sm:flex items-center gap-2 h-9 px-3 rounded-[var(--radius-md)] border border-border dark:border-white/10 bg-white dark:bg-white/5 text-sm text-graphite dark:text-zinc-400 hover:border-border-strong dark:hover:border-white/20 dark:hover:bg-white/10 transition-colors"
             >
               <Search className="h-4 w-4" />
               <span>Search orders</span>
-              <kbd className="text-xs bg-surface px-1.5 py-0.5 rounded">⌘K</kbd>
+              <kbd className="text-xs bg-surface dark:bg-white/10 dark:text-zinc-400 px-1.5 py-0.5 rounded">⌘K</kbd>
             </button>
             <ThemeToggle showLabels className="hidden lg:flex" />
             <ThemeToggle className="lg:hidden" />
-            <button className="h-9 w-9 rounded-[var(--radius-md)] border border-border bg-white flex items-center justify-center text-graphite hover:text-charcoal transition-colors relative">
+            <button className="h-9 w-9 rounded-[var(--radius-md)] border border-border dark:border-white/10 bg-white dark:bg-white/5 flex items-center justify-center text-graphite dark:text-zinc-400 hover:text-charcoal dark:hover:text-zinc-200 dark:hover:bg-white/10 transition-colors relative">
               <Bell className="h-4 w-4" />
               <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-accent" />
             </button>
             <button
               onClick={() => setStoreSwitcherOpen(true)}
-              className="flex items-center gap-2 h-9 pl-2 pr-3 rounded-[var(--radius-md)] border border-border bg-white hover:border-border-strong transition-colors"
+              className="flex items-center gap-2 h-9 pl-2 pr-3 rounded-[var(--radius-md)] border border-border dark:border-white/10 bg-white dark:bg-white/5 hover:border-border-strong dark:hover:border-white/20 dark:hover:bg-white/10 transition-colors"
             >
               <div className="h-6 w-6 rounded-full bg-accent-soft text-accent text-xs font-semibold flex items-center justify-center">
                 {userName[0]}
               </div>
-              <span className="text-sm font-medium text-charcoal hidden sm:inline max-w-[140px] truncate">
+              <span className="text-sm font-medium text-charcoal dark:text-zinc-200 hidden sm:inline max-w-[140px] truncate">
                 {activeStore.storeName}
               </span>
               <ChevronDown className="h-3.5 w-3.5 text-graphite" />
@@ -125,6 +141,7 @@ export function DashboardLayout() {
         onClose={() => setSelectedOrder(null)}
         onCancel={(id) => updateOrder(id, { status: 'cancelled' })}
       />
+      <FloatingCreateButton />
     </div>
   )
 }

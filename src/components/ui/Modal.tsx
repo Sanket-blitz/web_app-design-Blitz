@@ -38,7 +38,7 @@ export function Modal({ open, onClose, title, description, children, size = 'md'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-charcoal/40 dark:bg-charcoal/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-charcoal/40 dark:bg-slate/70 backdrop-blur-sm"
             onClick={onClose}
             aria-hidden
           />
@@ -60,15 +60,15 @@ export function Modal({ open, onClose, title, description, children, size = 'md'
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     {title && (
-                      <h2 id="modal-title" className="text-lg font-semibold text-charcoal dark:text-charcoal tracking-tight">
+                      <h2 id="modal-title" className="text-lg font-semibold text-charcoal dark:text-zinc-100 tracking-tight">
                         {title}
                       </h2>
                     )}
-                    {description && <p className="mt-1 text-sm text-graphite dark:text-graphite">{description}</p>}
+                    {description && <p className="mt-1 text-sm text-graphite dark:text-zinc-400">{description}</p>}
                   </div>
                   <button
                     onClick={onClose}
-                    className="h-8 w-8 rounded-[var(--radius-md)] flex items-center justify-center text-graphite dark:text-graphite hover:bg-surface dark:hover:bg-white/10 hover:text-charcoal dark:hover:text-charcoal transition-colors shrink-0"
+                    className="h-8 w-8 rounded-[var(--radius-md)] flex items-center justify-center text-graphite dark:text-zinc-400 hover:bg-surface dark:hover:bg-zinc-800 hover:text-charcoal dark:hover:text-zinc-200 transition-colors shrink-0"
                     aria-label="Close"
                   >
                     <X className="h-4 w-4" />
