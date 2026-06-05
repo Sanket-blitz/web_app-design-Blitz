@@ -22,6 +22,9 @@ const iconSizes = {
   lg: 'h-9 w-9',
 }
 
+const iconSrc = `${import.meta.env.BASE_URL}logo-icon-dark.png`
+const wordmarkSrc = `${import.meta.env.BASE_URL}logo-dark.png`
+
 export function BlitzLogo({ className, onDark = false, size = 'md', showText = true }: BlitzLogoProps) {
   const { theme } = useTheme()
   const dims = heights[size]
@@ -35,7 +38,7 @@ export function BlitzLogo({ className, onDark = false, size = 'md', showText = t
         aria-label="Blitz home"
       >
         <img
-          src="/logo-icon-dark.png"
+          src={iconSrc}
           alt=""
           className={cn(iconSizes[size], 'object-contain', lightLogo && 'brightness-0 invert')}
         />
@@ -50,7 +53,7 @@ export function BlitzLogo({ className, onDark = false, size = 'md', showText = t
       aria-label="Blitz Fulfillment OS home"
     >
       <img
-        src="/logo-dark.png"
+        src={wordmarkSrc}
         alt="Blitz"
         className={cn(
           dims.h,
