@@ -85,7 +85,7 @@ export function Store2DoorEconomics() {
   const [hovered, setHovered] = useState<string | null>(null)
 
   return (
-    <section id="economics" ref={ref} className="py-24 md:py-28 bg-off-white dark:bg-[#0a0a0f]">
+    <section id="economics" ref={ref} className="pt-10 pb-20 md:pt-12 md:pb-24 bg-off-white dark:bg-[#0a0a0f]">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-12">
           <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-graphite mb-3">Unit Economics</p>

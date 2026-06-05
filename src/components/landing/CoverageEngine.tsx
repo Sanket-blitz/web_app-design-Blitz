@@ -79,8 +79,8 @@ export function CoverageEngine() {
   return (
     <div
       ref={ref}
-      className="relative rounded-2xl border-2 border-border dark:border-zinc-600 overflow-hidden bg-pure-white dark:bg-[#0f0f14] shadow-xl"
-      style={{ minHeight: 'clamp(480px, 58vw, 580px)' }}
+      className="relative rounded-2xl border-2 border-border dark:border-zinc-600 overflow-hidden bg-pure-white dark:bg-[#0f0f14] shadow-xl flex"
+      style={{ minHeight: 'clamp(430px, 52vw, 520px)' }}
     >
       {/* Map backdrop */}
       <div className="absolute inset-0 bg-gradient-to-br from-off-white via-surface to-off-white dark:from-[#0f0f14] dark:via-[#14141c] dark:to-[#0a0a0f]" />
@@ -94,10 +94,10 @@ export function CoverageEngine() {
       />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(139,92,246,0.08),transparent_55%)] dark:bg-[radial-gradient(ellipse_at_30%_50%,rgba(139,92,246,0.14),transparent_55%)]" />
 
-      <div className="relative z-10 grid lg:grid-cols-[minmax(220px,1fr)_auto_280px] gap-4 p-4 sm:p-6 h-full min-h-[inherit] items-center">
+      <div className="relative z-10 grid lg:grid-cols-[minmax(210px,1fr)_auto_280px] gap-4 p-4 sm:p-5 flex-1 w-full items-center">
         {/* Left: demand map — zones scoped to this column only */}
-        <div className="relative hidden lg:block min-h-[420px] w-full">
-          <div className="absolute inset-0 pointer-events-none">
+        <div className="relative hidden lg:block w-full h-[360px] self-center">
+          <div className="absolute inset-0 pointer-events-none -translate-x-[5%]">
             {DEMAND_ZONES.map((z, i) => (
               <ZoneMarker key={z.name} zone={z} index={i} />
             ))}
@@ -166,17 +166,17 @@ export function CoverageEngine() {
         </motion.div>
 
         {/* Outcome cards */}
-        <div className="flex flex-col gap-2 sm:gap-2.5 max-h-[420px] overflow-y-auto pr-1">
+        <div className="flex flex-col gap-2">
           {OUTCOMES.map((o, i) => (
             <motion.div
               key={o.area}
               initial={{ opacity: 0, x: 16 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: 0.15 + i * 0.08 }}
-              className="rounded-xl border border-border dark:border-zinc-600 bg-pure-white/90 dark:bg-zinc-900/90 backdrop-blur-sm px-3.5 py-3 shadow-sm hover:shadow-md hover:border-success/40 dark:hover:border-emerald-500/40 transition-all"
+              className="rounded-xl border border-border dark:border-zinc-600 bg-pure-white/90 dark:bg-zinc-900/90 backdrop-blur-sm px-3 py-2.5 shadow-sm hover:shadow-md hover:border-success/40 dark:hover:border-emerald-500/40 transition-all"
             >
               <p className="text-[10px] font-semibold text-graphite dark:text-zinc-400">{o.area}</p>
-              <p className="text-sm font-bold text-charcoal mt-0.5">{o.result}</p>
+              <p className="text-sm font-bold text-charcoal dark:text-zinc-100 mt-0.5">{o.result}</p>
               <p className="text-[10px] text-success dark:text-emerald-400 font-medium mt-0.5">{o.detail}</p>
             </motion.div>
           ))}

@@ -109,7 +109,7 @@ export function LandingPage() {
       <PainPoints />
 
       {/* Coverage */}
-      <section id="coverage" className="relative py-24 md:py-28 overflow-hidden bg-surface dark:bg-[#0c0c12]">
+      <section id="coverage" className="relative pt-20 pb-10 md:pt-24 md:pb-12 overflow-hidden bg-surface dark:bg-[#0c0c12]">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(139,92,246,0.05),transparent)] dark:bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(139,92,246,0.1),transparent)] pointer-events-none" />
         <div className="relative max-w-[1200px] mx-auto px-6">
           <div className="text-center mb-12">
