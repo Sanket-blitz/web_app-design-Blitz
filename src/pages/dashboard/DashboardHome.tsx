@@ -9,6 +9,7 @@ import {
   Upload,
   MapPin,
   Headphones,
+  Bike,
   Activity,
   Timer,
   Shield,
@@ -39,6 +40,7 @@ import {
 interface DashboardHomeProps {
   onSelectOrder: (order: Order) => void
   onOpenSearch: () => void
+  onOpenRiderSearch: () => void
 }
 
 function isToday(iso: string) {
@@ -47,7 +49,7 @@ function isToday(iso: string) {
   return d.toDateString() === now.toDateString()
 }
 
-export function DashboardHome({ onSelectOrder, onOpenSearch }: DashboardHomeProps) {
+export function DashboardHome({ onSelectOrder, onOpenSearch, onOpenRiderSearch }: DashboardHomeProps) {
   const navigate = useNavigate()
   const { activeStore, userName, orders, stores } = useOnboarding()
   const [bulkOpen, setBulkOpen] = useState(false)
@@ -90,6 +92,7 @@ export function DashboardHome({ onSelectOrder, onOpenSearch }: DashboardHomeProp
 
   const quickActions = [
     { label: 'Create Delivery', icon: Plus, primary: true, action: () => navigate('/dashboard/create') },
+    { label: 'Search Rider', icon: Bike, primary: false, action: onOpenRiderSearch },
     { label: 'Bulk Upload', icon: Upload, primary: false, action: () => setBulkOpen(true) },
     { label: 'Track Order', icon: MapPin, primary: false, action: () => setTrackOpen(true) },
     { label: 'Support', icon: Headphones, primary: false, action: () => setSupportOpen(true) },

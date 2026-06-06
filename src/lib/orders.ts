@@ -338,9 +338,19 @@ export function isInTransit(order: Order): boolean {
   return !!order.riderId && ['ongoing', 'in_transit', 'picked_up', 'assigned'].includes(order.status)
 }
 
+export function findOrdersByRiderQuery(orders: Order[], query: string): Order[] {
+  const q = query.trim().toLowerCase()
+  if (!q) return []
+  return orders.filter(
+    (o) =>
+      o.riderId?.toLowerCase().includes(q) ||
+      o.riderName?.toLowerCase().includes(q),
+  )
+}
+
+/** @deprecated use findOrdersByRiderQuery */
 export function findOrdersByRiderId(orders: Order[], riderId: string): Order[] {
-  const q = riderId.trim().toLowerCase()
-  return orders.filter((o) => o.riderId?.toLowerCase().includes(q))
+  return findOrdersByRiderQuery(orders, riderId)
 }
 
 export function getRiderDisplay(order: Order) {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Bell, Plus, Search, ChevronDown, Bike } from 'lucide-react'
+import { Bell, Plus, Search, ChevronDown } from 'lucide-react'
 import { BlitzLogo } from '../../components/layout/BlitzLogo'
 import { ThemeToggle } from '../../components/ui/ThemeToggle'
 import { StoreSwitcherModal } from '../../components/dashboard/StoreSwitcherModal'
@@ -85,13 +85,6 @@ export function DashboardLayout() {
               <Plus className="h-4 w-4" /> Create Delivery
             </Button>
             <button
-              onClick={() => setRiderSearchOpen(true)}
-              className="hidden sm:flex items-center gap-2 h-9 px-3 rounded-[var(--radius-md)] border border-border dark:border-white/10 bg-white dark:bg-white/5 text-sm text-graphite dark:text-zinc-400 hover:border-emerald-500/50 hover:text-emerald-700 dark:hover:text-emerald-400 dark:hover:bg-white/10 transition-colors"
-            >
-              <Bike className="h-4 w-4" />
-              <span>Rider ID</span>
-            </button>
-            <button
               onClick={() => setSearchOpen(true)}
               className="hidden sm:flex items-center gap-2 h-9 px-3 rounded-[var(--radius-md)] border border-border dark:border-white/10 bg-white dark:bg-white/5 text-sm text-graphite dark:text-zinc-400 hover:border-border-strong dark:hover:border-white/20 dark:hover:bg-white/10 transition-colors"
             >
@@ -138,8 +131,19 @@ export function DashboardLayout() {
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-8">
-        {tab === 'home' && <DashboardHome onSelectOrder={setSelectedOrder} onOpenSearch={() => setSearchOpen(true)} />}
-        {tab === 'orders' && <DashboardOrders onSelectOrder={setSelectedOrder} />}
+        {tab === 'home' && (
+          <DashboardHome
+            onSelectOrder={setSelectedOrder}
+            onOpenSearch={() => setSearchOpen(true)}
+            onOpenRiderSearch={() => setRiderSearchOpen(true)}
+          />
+        )}
+        {tab === 'orders' && (
+          <DashboardOrders
+            onSelectOrder={setSelectedOrder}
+            onOpenRiderSearch={() => setRiderSearchOpen(true)}
+          />
+        )}
         {tab === 'finance' && <DashboardFinance />}
       </main>
 

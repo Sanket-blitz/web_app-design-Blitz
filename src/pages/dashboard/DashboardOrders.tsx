@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Filter, Plus } from 'lucide-react'
+import { Filter, Plus, Bike } from 'lucide-react'
 import { Card } from '../../components/ui/Card'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
@@ -30,9 +30,10 @@ const filters: { id: OrderStatus | 'all' | 'active'; label: string }[] = [
 
 interface DashboardOrdersProps {
   onSelectOrder: (order: Order) => void
+  onOpenRiderSearch: () => void
 }
 
-export function DashboardOrders({ onSelectOrder }: DashboardOrdersProps) {
+export function DashboardOrders({ onSelectOrder, onOpenRiderSearch }: DashboardOrdersProps) {
   const navigate = useNavigate()
   const { orders, activeStore } = useOnboarding()
   const [filter, setFilter] = useState<OrderStatus | 'all' | 'active'>('all')
@@ -64,9 +65,14 @@ export function DashboardOrders({ onSelectOrder }: DashboardOrdersProps) {
           <h1 className="text-2xl font-semibold text-charcoal tracking-tight">Orders</h1>
           <p className="mt-1 text-sm text-graphite">{activeStore.storeName} · {storeOrders.length} orders</p>
         </div>
-        <Button size="sm" onClick={() => navigate('/dashboard/create')}>
-          <Plus className="h-4 w-4" /> Create Delivery
-        </Button>
+        <div className="flex flex-col items-stretch sm:items-end gap-2">
+          <Button size="sm" onClick={() => navigate('/dashboard/create')}>
+            <Plus className="h-4 w-4" /> Create Delivery
+          </Button>
+          <Button variant="outline" size="sm" onClick={onOpenRiderSearch}>
+            <Bike className="h-4 w-4" /> Search Rider
+          </Button>
+        </div>
       </div>
 
       <div className="flex items-center gap-2 overflow-x-auto pb-1">
@@ -120,9 +126,14 @@ export function DashboardOrders({ onSelectOrder }: DashboardOrdersProps) {
                   <td className="px-4 py-3.5">
                     <Badge variant={getStatusVariant(o.status)}>{getStatusLabel(o.status)}</Badge>
                   </td>
-                  <td className="px-4 py-3.5 text-xs font-mono text-graphite dark:text-zinc-400">
+                  <td className="px-4 py-3.5 text-xs text-graphite dark:text-zinc-400">
                     {o.riderId ? (
-                      <span className="text-emerald-700 dark:text-emerald-400">{o.riderId}</span>
+                      <div className="leading-snug">
+                        <span className="font-mono font-medium text-emerald-700 dark:text-emerald-400">{o.riderId}</span>
+                        {o.riderName && (
+                          <span className="block text-charcoal dark:text-zinc-300 normal-case mt-0.5">{o.riderName}</span>
+                        )}
+                      </div>
                     ) : (
                       <span className="text-amber-600 dark:text-amber-400">Searching…</span>
                     )}
