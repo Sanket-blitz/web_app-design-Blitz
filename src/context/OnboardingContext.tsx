@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { DEFAULT_STORES, type Store } from '../lib/stores'
-import { MOCK_ORDERS, type Order } from '../lib/orders'
+import { MOCK_ORDERS, hydrateOrders, type Order } from '../lib/orders'
 
 export interface CompanyData {
   brandName: string
@@ -131,7 +131,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     loadFromStorage(ACTIVE_STORE_KEY, '')
   )
   const [orders, setOrders] = useState<Order[]>(() =>
-    loadFromStorage(ORDERS_KEY, MOCK_ORDERS)
+    hydrateOrders(loadFromStorage(ORDERS_KEY, MOCK_ORDERS))
   )
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
   const [userName, setUserName] = useState('Aryan')

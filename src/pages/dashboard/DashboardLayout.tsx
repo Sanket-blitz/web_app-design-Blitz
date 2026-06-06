@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Bell, Plus, Search, ChevronDown } from 'lucide-react'
+import { Bell, Plus, Search, ChevronDown, Bike } from 'lucide-react'
 import { BlitzLogo } from '../../components/layout/BlitzLogo'
 import { ThemeToggle } from '../../components/ui/ThemeToggle'
 import { StoreSwitcherModal } from '../../components/dashboard/StoreSwitcherModal'
@@ -10,6 +10,7 @@ import { DashboardHome } from './DashboardHome.tsx'
 import { DashboardOrders } from './DashboardOrders.tsx'
 import { DashboardFinance } from './DashboardFinance.tsx'
 import { OrderTimelineModal } from '../../components/dashboard/OrderTimelineModal'
+import { RiderSearchModal } from '../../components/dashboard/RiderSearchModal'
 import { FloatingCreateButton } from '../../components/dashboard/FloatingCreateButton'
 import { Button } from '../../components/ui/Button'
 import type { Order } from '../../lib/orders'
@@ -30,6 +31,7 @@ export function DashboardLayout() {
   const { activeStore, userName, updateOrder } = useOnboarding()
   const [storeSwitcherOpen, setStoreSwitcherOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [riderSearchOpen, setRiderSearchOpen] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 
   const setTab = (id: TabId) => setSearchParams({ tab: id })
@@ -82,6 +84,13 @@ export function DashboardLayout() {
             <Button size="sm" className="hidden md:inline-flex" onClick={() => navigate('/dashboard/create')}>
               <Plus className="h-4 w-4" /> Create Delivery
             </Button>
+            <button
+              onClick={() => setRiderSearchOpen(true)}
+              className="hidden sm:flex items-center gap-2 h-9 px-3 rounded-[var(--radius-md)] border border-border dark:border-white/10 bg-white dark:bg-white/5 text-sm text-graphite dark:text-zinc-400 hover:border-emerald-500/50 hover:text-emerald-700 dark:hover:text-emerald-400 dark:hover:bg-white/10 transition-colors"
+            >
+              <Bike className="h-4 w-4" />
+              <span>Rider ID</span>
+            </button>
             <button
               onClick={() => setSearchOpen(true)}
               className="hidden sm:flex items-center gap-2 h-9 px-3 rounded-[var(--radius-md)] border border-border dark:border-white/10 bg-white dark:bg-white/5 text-sm text-graphite dark:text-zinc-400 hover:border-border-strong dark:hover:border-white/20 dark:hover:bg-white/10 transition-colors"
@@ -136,6 +145,7 @@ export function DashboardLayout() {
 
       <StoreSwitcherModal open={storeSwitcherOpen} onClose={() => setStoreSwitcherOpen(false)} />
       <OrderSearchModal open={searchOpen} onClose={() => setSearchOpen(false)} onSelectOrder={setSelectedOrder} />
+      <RiderSearchModal open={riderSearchOpen} onClose={() => setRiderSearchOpen(false)} onSelectOrder={setSelectedOrder} />
       <OrderTimelineModal
         order={selectedOrder}
         onClose={() => setSelectedOrder(null)}

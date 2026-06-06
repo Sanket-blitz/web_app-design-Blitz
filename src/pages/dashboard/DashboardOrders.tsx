@@ -95,7 +95,7 @@ export function DashboardOrders({ onSelectOrder }: DashboardOrdersProps) {
             action={{ label: 'Create Delivery', onClick: () => navigate('/dashboard/create') }}
           />
         ) : (
-          <table className="w-full min-w-[800px] text-sm">
+          <table className="w-full min-w-[920px] text-sm">
             <thead>
               <tr className="border-b border-border dark:border-white/10 text-left text-xs text-graphite dark:text-zinc-400 uppercase tracking-wide">
                 <th className="px-4 py-3 font-medium">Tracking ID</th>
@@ -103,6 +103,7 @@ export function DashboardOrders({ onSelectOrder }: DashboardOrdersProps) {
                 <th className="px-4 py-3 font-medium">SKU</th>
                 <th className="px-4 py-3 font-medium">Service</th>
                 <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium">Rider</th>
                 <th className="px-4 py-3 font-medium">ETA</th>
                 <th className="px-4 py-3 font-medium text-right">Amount</th>
                 <th className="px-4 py-3 font-medium">Created</th>
@@ -118,6 +119,13 @@ export function DashboardOrders({ onSelectOrder }: DashboardOrdersProps) {
                   <td className="px-4 py-3.5 text-graphite dark:text-zinc-400">{getServiceLabel(o)}</td>
                   <td className="px-4 py-3.5">
                     <Badge variant={getStatusVariant(o.status)}>{getStatusLabel(o.status)}</Badge>
+                  </td>
+                  <td className="px-4 py-3.5 text-xs font-mono text-graphite dark:text-zinc-400">
+                    {o.riderId ? (
+                      <span className="text-emerald-700 dark:text-emerald-400">{o.riderId}</span>
+                    ) : (
+                      <span className="text-amber-600 dark:text-amber-400">Searching…</span>
+                    )}
                   </td>
                   <td className="px-4 py-3.5 text-graphite dark:text-zinc-400">{o.eta ?? '—'}</td>
                   <td className="px-4 py-3.5 text-right font-medium text-charcoal dark:text-zinc-200">₹{getOrderAmount(o)}</td>

@@ -256,7 +256,10 @@ export function DashboardHome({ onSelectOrder, onOpenSearch }: DashboardHomeProp
                 <button key={o.id} onClick={() => onSelectOrder(o)} className="w-full text-left text-sm hover:bg-surface dark:hover:bg-white/5 p-2 rounded-[var(--radius-md)] transition-colors">
                   <span className="font-mono text-charcoal">{o.id}</span>
                   <span className="text-graphite ml-2">{o.customer}</span>
-                  <span className="text-xs text-graphite block mt-0.5">{getServiceLabel(o)} · {o.eta}</span>
+                  <span className="text-xs text-graphite block mt-0.5">
+                    {getServiceLabel(o)} · {o.eta}
+                    {o.riderId && <span className="text-emerald-700 dark:text-emerald-400 ml-2 font-mono">{o.riderId}</span>}
+                  </span>
                 </button>
               ))}
             </Card>
