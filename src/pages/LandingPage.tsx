@@ -11,6 +11,7 @@ import {
   Clock,
 } from 'lucide-react'
 import { BlitzLogo } from '../components/layout/BlitzLogo'
+import { Store2DoorMark } from '../components/layout/Store2DoorMark'
 import { Footer } from '../components/layout/Footer'
 import { HeroOutcomes } from '../components/landing/HeroOutcomes'
 import { BookDemoModal } from '../components/landing/BookDemoModal'
@@ -48,7 +49,10 @@ export function LandingPage() {
     <div className="min-h-screen bg-off-white dark:bg-[#0a0a0f] transition-colors duration-300">
       <nav className="sticky top-0 z-50 bg-pure-white/85 dark:bg-zinc-900/90 backdrop-blur-lg border-b-2 border-border dark:border-zinc-700 shadow-sm">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <BlitzLogo />
+          <div className="flex items-center gap-4 sm:gap-5 min-w-0 shrink">
+            <BlitzLogo size="lg" />
+            <Store2DoorMark size="lg" className="max-[380px]:text-[11px]" />
+          </div>
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((l) => (
               <a key={l.href} href={l.href} className="px-3 py-1.5 rounded-lg text-sm font-medium text-graphite hover:text-charcoal hover:bg-surface dark:hover:bg-zinc-800 transition-all">
