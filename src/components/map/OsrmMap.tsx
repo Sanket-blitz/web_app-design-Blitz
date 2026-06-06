@@ -171,8 +171,8 @@ function GeofenceOverlay({ mode }: { mode: 'search' | 'transit' }) {
           )}
         />
       </div>
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-white/95 dark:bg-zinc-900/95 border border-violet-300/50 dark:border-violet-600/40 text-[10px] font-semibold uppercase tracking-wider text-violet-700 dark:text-violet-300 shadow-sm">
-        {isSearch ? '● Scanning zone · 1.4 km' : '● Rider live zone'}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-white/95 dark:bg-zinc-900/95 border border-violet-300/50 dark:border-violet-600/40 text-[9px] font-semibold uppercase tracking-wide text-violet-700 dark:text-violet-300 shadow-sm">
+        {isSearch ? 'Scanning · 1.4 km' : 'Live zone'}
       </div>
     </div>
   )
