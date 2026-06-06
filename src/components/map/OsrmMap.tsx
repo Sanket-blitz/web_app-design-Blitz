@@ -30,6 +30,8 @@ interface OsrmMapProps {
   routes?: TrackingRoute[]
   /** Geofence circles — Uber-style search zone */
   circles?: TrackingCircle[]
+  /** CSS overlay fence — always visible on top of map tiles */
+  fenceMode?: 'search' | 'transit' | 'none'
   mapLabel?: string
   interactive?: boolean
 }
@@ -68,29 +70,28 @@ function MapRecenter({ center, zoom }: { center: LatLng; zoom: number }) {
 
 function PulsingFence({ center, radiusMeters }: { center: LatLng; radiusMeters: number }) {
   const map = useMap()
-  const layerRef = useRef<L.Circle | null>(null)
 
   useEffect(() => {
     const circle = L.circle([center.lat, center.lng], {
       radius: radiusMeters,
-      color: '#3b6fd9',
-      fillColor: '#3b6fd9',
-      fillOpacity: 0.06,
-      weight: 2,
-      dashArray: '10 8',
+      color: '#7c3aed',
+      fillColor: '#8b5cf6',
+      fillOpacity: 0.18,
+      weight: 3,
+      dashArray: '12 8',
     })
     circle.addTo(map)
-    layerRef.current = circle
+    circle.bringToFront()
 
     let growing = true
     let r = radiusMeters
     const id = window.setInterval(() => {
-      r = growing ? r + 8 : r - 8
-      if (r >= radiusMeters + 80) growing = false
+      r = growing ? r + 12 : r - 12
+      if (r >= radiusMeters + 120) growing = false
       if (r <= radiusMeters) growing = true
       circle.setRadius(r)
-      circle.setStyle({ fillOpacity: 0.04 + (r - radiusMeters) / 800 })
-    }, 120)
+      circle.setStyle({ fillOpacity: 0.12 + (r - radiusMeters) / 600 })
+    }, 100)
 
     return () => {
       window.clearInterval(id)
@@ -99,6 +100,82 @@ function PulsingFence({ center, radiusMeters }: { center: LatLng; radiusMeters: 
   }, [map, center.lat, center.lng, radiusMeters])
 
   return null
+}
+
+function StaticFence({ center, radiusMeters }: { center: LatLng; radiusMeters: number }) {
+  return (
+    <Circle
+      center={[center.lat, center.lng]}
+      radius={radiusMeters}
+      pathOptions={{
+        color: '#7c3aed',
+        fillColor: '#8b5cf6',
+        fillOpacity: 0.1,
+        weight: 2.5,
+        dashArray: '8 8',
+      }}
+    />
+  )
+}
+
+function MapFitBounds({ points }: { points: LatLng[] }) {
+  const map = useMap()
+  const pointsKey = points.map((p) => `${p.lat.toFixed(5)},${p.lng.toFixed(5)}`).join('|')
+
+  useEffect(() => {
+    if (!pointsKey) return
+    const t = setTimeout(() => {
+      const pts = pointsKey.split('|').map((s) => {
+        const [lat, lng] = s.split(',').map(Number)
+        return { lat, lng }
+      })
+      if (pts.length === 1) {
+        map.setView([pts[0].lat, pts[0].lng], 14, { animate: false })
+      } else {
+        const bounds = L.latLngBounds(pts.map((p) => [p.lat, p.lng] as [number, number]))
+        map.fitBounds(bounds.pad(0.35), { maxZoom: 15, animate: false })
+      }
+      map.invalidateSize()
+    }, 350)
+    return () => clearTimeout(t)
+  }, [map, pointsKey, points])
+
+  return null
+}
+
+function GeofenceOverlay({ mode }: { mode: 'search' | 'transit' }) {
+  const isSearch = mode === 'search'
+  return (
+    <div className="absolute inset-0 pointer-events-none z-[400] overflow-hidden">
+      <div className="absolute left-1/2 top-1/2 h-0 w-0">
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            className={cn(
+              'absolute left-0 top-0 rounded-full border-2 animate-geofence-ring',
+              isSearch
+                ? 'border-violet-500 bg-violet-500/15'
+                : 'border-emerald-500 bg-emerald-500/15',
+            )}
+            style={{
+              width: isSearch ? 'min(72vw, 280px)' : 'min(56vw, 220px)',
+              height: isSearch ? 'min(72vw, 280px)' : 'min(56vw, 220px)',
+              animationDelay: `${i * 0.85}s`,
+            }}
+          />
+        ))}
+        <span
+          className={cn(
+            'absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 h-4 w-4 rounded-full border-2 border-white shadow-lg',
+            isSearch ? 'bg-violet-600' : 'bg-emerald-600',
+          )}
+        />
+      </div>
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-white/95 dark:bg-zinc-900/95 border border-violet-300/50 dark:border-violet-600/40 text-[10px] font-semibold uppercase tracking-wider text-violet-700 dark:text-violet-300 shadow-sm">
+        {isSearch ? '● Scanning zone · 1.4 km' : '● Rider live zone'}
+      </div>
+    </div>
+  )
 }
 
 const markerColors: Record<string, string> = {
@@ -149,6 +226,7 @@ export function OsrmMap({
   markers = EMPTY_MARKERS,
   routes = EMPTY_ROUTES,
   circles = EMPTY_CIRCLES,
+  fenceMode = 'none',
   mapLabel,
   interactive = true,
 }: OsrmMapProps) {
@@ -207,8 +285,20 @@ export function OsrmMap({
     ? markers
     : pin ? [{ position: pin, label: 'Pinned', color: 'default', icon: 'circle' as const }] : []
 
+  const fitPoints = useMemo(() => {
+    const pts = [...markers.map((m) => m.position), ...circles.map((c) => c.center)]
+    for (const c of circles) {
+      const d = c.radiusMeters / 111320
+      pts.push({ lat: c.center.lat + d, lng: c.center.lng })
+      pts.push({ lat: c.center.lat - d, lng: c.center.lng })
+    }
+    return pts
+  }, [markers, circles])
+
+  const showFence = fenceMode === 'search' || fenceMode === 'transit'
+
   return (
-    <div className={cn('relative z-0 isolate overflow-hidden rounded-[var(--radius-lg)] border border-border contain-paint', height, className)}>
+    <div className={cn('relative z-0 isolate overflow-hidden rounded-[var(--radius-lg)] border border-border', height, className)}>
       <MapContainer
         center={[mapCenter.lat, mapCenter.lng]}
         zoom={zoom}
@@ -224,24 +314,14 @@ export function OsrmMap({
         />
         <MapResizer />
         <MapRecenter center={mapCenter} zoom={zoom} />
+        <MapFitBounds points={fitPoints} />
         {pinMode && <PinClickHandler onPin={handlePin} />}
 
         {circles.map((c, i) =>
           c.pulse ? (
             <PulsingFence key={`pulse-${i}`} center={c.center} radiusMeters={c.radiusMeters} />
           ) : (
-            <Circle
-              key={`circle-${i}`}
-              center={[c.center.lat, c.center.lng]}
-              radius={c.radiusMeters}
-              pathOptions={{
-                color: '#3b6fd9',
-                fillColor: '#3b6fd9',
-                fillOpacity: 0.05,
-                weight: 1.5,
-                dashArray: '6 6',
-              }}
-            />
+            <StaticFence key={`circle-${i}`} center={c.center} radiusMeters={c.radiusMeters} />
           ),
         )}
 
@@ -291,6 +371,8 @@ export function OsrmMap({
           />
         )}
       </MapContainer>
+
+      {showFence && <GeofenceOverlay mode={fenceMode} />}
 
       {mapLabel && (
         <div className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-medium text-charcoal dark:text-zinc-100 shadow-sm pointer-events-none border border-border/60">

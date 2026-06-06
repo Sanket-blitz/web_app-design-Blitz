@@ -127,6 +127,7 @@ export function OrderTimelineModal({ order, onClose, onCancel }: OrderTimelineMo
           routes={mapState.routes}
           markers={mapState.markers}
           circles={mapState.circles}
+          fenceMode={mapState.mode === 'searching' ? 'search' : mapState.mode === 'transit' ? 'transit' : 'none'}
           mapLabel={mapState.mapLabel}
           zoom={mapState.mode === 'searching' ? 14 : 13}
         />

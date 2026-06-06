@@ -102,7 +102,7 @@ const OnboardingContext = createContext<OnboardingContextType | null>(null)
 const COMPANY_KEY = 'blitz_company'
 const STORES_KEY = 'blitz_stores'
 const ACTIVE_STORE_KEY = 'blitz_active_store'
-const ORDERS_KEY = 'blitz_orders'
+const ORDERS_KEY = 'blitz_orders_v2'
 
 function loadFromStorage<T>(key: string, fallback: T): T {
   try {
@@ -213,6 +213,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(STORES_KEY)
     localStorage.removeItem(ACTIVE_STORE_KEY)
     localStorage.removeItem(ORDERS_KEY)
+    localStorage.removeItem('blitz_orders')
   }
 
   return (

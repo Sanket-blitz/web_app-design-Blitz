@@ -43,13 +43,13 @@ export function buildOrderMapState(order: Order): OrderMapState {
   const customer = getCustomerCenter(order)
 
   if (isSearchingRider(order)) {
-    const nearby = generateNearbyRiders(store, 6, order.id.length)
+    const nearby = generateNearbyRiders(store, 8, order.id.length)
     return {
       mode: 'searching',
       mapLabel: 'Searching nearby riders…',
       circles: [
-        { center: store, radiusMeters: 650, pulse: true },
-        { center: store, radiusMeters: 1100, pulse: false },
+        { center: store, radiusMeters: 900, pulse: true },
+        { center: store, radiusMeters: 1400, pulse: false },
       ],
       markers: [
         { position: store, label: order.storeName, color: 'store', icon: 'store' },
@@ -78,9 +78,10 @@ export function buildOrderMapState(order: Order): OrderMapState {
     return {
       mode: 'transit',
       mapLabel: `${order.riderName ?? 'Rider'} en route`,
-      circles: customer
-        ? [{ center: customer, radiusMeters: 400, pulse: false }]
-        : [],
+      circles: [
+        { center: riderPos, radiusMeters: 700, pulse: true },
+        ...(customer ? [{ center: customer, radiusMeters: 500, pulse: false }] : []),
+      ],
       routes: [
         { waypoints: fullRoute, color: '#94a3b8', dashed: true, weight: 3 },
         { waypoints: riderLeg, color: '#1a7f4b', weight: 5 },

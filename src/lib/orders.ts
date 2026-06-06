@@ -294,18 +294,38 @@ export function hydrateOrders(stored: Order[]): Order[] {
   return stored.map((o) => {
     const seed = MOCK_BY_ID.get(o.id)
     if (!seed) return o
-    return {
+
+    const seedSearching = !seed.riderId && ['created', 'pickup_pending', 'upcoming'].includes(seed.status)
+    const merged: Order = {
       ...o,
+      status: o.status === 'cancelled' ? o.status : seed.status,
+      timeline: seed.timeline.length > o.timeline.length ? seed.timeline : o.timeline,
+      lat: o.lat ?? seed.lat,
+      lng: o.lng ?? seed.lng,
+      deliverBy: o.deliverBy ?? seed.deliverBy,
+      eta: o.eta ?? seed.eta,
+    }
+
+    if (seedSearching) {
+      merged.riderId = undefined
+      merged.riderName = undefined
+      merged.assignedAt = undefined
+      merged.riderArrivingAt = undefined
+      merged.riderLat = undefined
+      merged.riderLng = undefined
+      merged.deliveredAt = undefined
+      return merged
+    }
+
+    return {
+      ...merged,
       riderId: o.riderId ?? seed.riderId,
       riderName: o.riderName ?? seed.riderName,
       assignedAt: o.assignedAt ?? seed.assignedAt,
       riderArrivingAt: o.riderArrivingAt ?? seed.riderArrivingAt,
-      deliverBy: o.deliverBy ?? seed.deliverBy,
       deliveredAt: o.deliveredAt ?? seed.deliveredAt,
       riderLat: o.riderLat ?? seed.riderLat,
       riderLng: o.riderLng ?? seed.riderLng,
-      lat: o.lat ?? seed.lat,
-      lng: o.lng ?? seed.lng,
     }
   })
 }
